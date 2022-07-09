@@ -67,106 +67,94 @@ fi
 
 
 
-function less_than () {
-    local left="$1"
-    local right="$2"
+function cmp_subvers () {
+    local lh="$1" ; shift
+    local rh="$1" ; shift
+    local lhh rhh exp
 
-    left="$(echo "$left" | \
-        sed -e 's/\([0-9]\)\([^0-9]\)/\1.\2/g' \
-        -e 's/\([^0-9]\)\([0-9]\)/\1.\2/g')"
+    ## Strip off identical components.
+    exp='n'
+    while
+        case "$exp" in
+            (n)
+                ## Expect numerics.
+                [[ "$lh" =~ ^([0-9]*)(.*)$ ]]
+                lhh="${BASH_REMATCH[1]}"
+                lh="${BASH_REMATCH[2]}"
+                [[ "$rh" =~ ^([0-9]*)(.*)$ ]]
+                rhh="${BASH_REMATCH[1]}"
+                rh="${BASH_REMATCH[2]}"
+                exp='t'
 
-    right="$(echo "$right" | \
-        sed -e 's/\([0-9]\)\([^0-9]\)/\1.\2/g' \
-        -e 's/\([^0-9]\)\([0-9]\)/\1.\2/g')"
+                test "${lhh:-0}" -eq "${rhh:-0}"
+                ;;
 
-    if [ "$left" == "$1" -a "$right" == "$2" ] ; then
-        # We're dealing with atoms, so do the direct comparison.
-        if [[ "$left" =~ ^-?[0-9]+$ ]] ; then
-            if [[ "$right" =~ ^-?[0-9]+$ ]] ; then
-                # Numeric comparison is possible.
-                if [ "$1" -lt "$2" ] ; then
-                    return 0
-                else
-                    return 1
-                fi
-            else
-                # The name (right) is always less than the number
-                # (left).
+            (t)
+                ## Expect text.
+                [[ "$lh" =~ ^([^0-9]*)(.*)$ ]]
+                lhh="${BASH_REMATCH[1]}"
+                lh="${BASH_REMATCH[2]}"
+                [[ "$rh" =~ ^([^0-9]*)(.*)$ ]]
+                rhh="${BASH_REMATCH[1]}"
+                rh="${BASH_REMATCH[2]}"
+                exp='n'
+
+                test -n "$lhh" -a "$lhh" = "$rhh"
+                ;;
+        esac
+    do true ; done
+
+    case "$exp" in
+        (t)
+            if [ "${rhh:-0}" -gt "${lhh:-0}" ] ; then
                 return 1
-            fi
-        else
-            if [[ "$right" =~ ^-?[0-9]+$ ]] ; then
-                # The name (left) is always less than the number
-                # (right).
-                return 0
+            elif [ "${rhh:-0}" -lt "${lhh:-0}" ] ; then
+                return 2
             else
-                # Do alphabetic comparison.
-                if [ "$left" \< "$right" ] ; then
-                    return 0
-                else
-                    return 1
-                fi
+                return 0
             fi
-        fi
-    else
-        if [ "$left" == "$1" ] ; then left="$left.0" ; fi
-        if [ "$right" == "$1" ] ; then left="$right.0" ; fi
-        # At least one operand is compound, so apply the more complex
-        # comparison.
-        if cmp_vers "$left" "$right" ; then
-            return 0
-        else
-            return 1
-        fi
-    fi
-
-
-#    if [ "$1" -lt "$2" ] ; then
-#       return 0
-#    fi
-#    return 1
+            ;;
+        (n)
+            if [ "$rhh" \> "$lhh" ] ; then
+                test -z "$lhh" && return 2
+                return 1
+            elif [ "$rhh" \< "$lhh" ] ; then
+                test -z "$rhh" && return 1
+                return 2
+            else
+                return 0
+            fi
+            ;;
+    esac
 }
 
-# Return 0 (true) if the second version number is at least as recent
-# as the first.  $1 <= $2  or $2 >= $1
 function cmp_vers () {
-    local v1="$1" ; shift
-    local v2="$1" ; shift
-    local nv1
-    local nv2
+    local left="${1,,}" ; shift
+    local right="${1,,}" ; shift
+    local lh rh rc
 
-    while true ; do
-        # Remove and store suffixes.
-        nv1="${v1#*.}"
-        if [ "$nv1" == "$v1" ] ; then
-            unset nv1
-        else
-            v1="${v1%%.*}"
-        fi
-        nv2="${v2#*.}"
-        if [ "$nv2" == "$v2" ] ; then
-            unset nv2
-        else
-            v2="${v2%%.*}"
-        fi
+    while
+        ## Extract the heads.
+        lh="${left%%.*}"
+        rh="${right%%.*}"
+        test -n "$lh" -a -n "$rh"
+    do
+        ## Remove heads so we're left with the tails.
+        left="${left#"$lh"}"
+        left="${left#.}"
+        right="${right#"$rh"}"
+        right="${right#.}"
 
-        # Check number at this level to see if it fails the
-        # requirement.
-        less_than "$v2" "$v1" && return 1
-        less_than "$v1" "$v2" && return 0
-
-        # The numbers must be identical here.
-
-        # If there is no further requirement, we have a match.
-        [ -z "$nv1" ] && return 0
-
-        # If there is nothing more available, we have a failure.
-        [ -z "$nv2" ] && return 1
-
-        # Move on to next segments.
-        v1="$nv1"
-        v2="$nv2"
+        cmp_subvers "$lh" "$rh"
+        rc=$?
+        test $rc -eq 0 && continue
+        test $rc -lt 2
+        return $?
     done
+
+    cmp_subvers "$lh" "$rh"
+    rc=$?
+    test $rc -lt 2
 }
 
 
