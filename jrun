@@ -48,11 +48,11 @@ function find_lib () {
 
     # Find all matching files.
     cands=("${cands[@]}" \
-        "$dir/$root${major:+-$major}"*.jar \
-        "$dir/$root${major:+-$major}"*.zip)
+        "$dir/$root${major:+-"$major"}"*.jar \
+        "$dir/$root${major:+-"$major"}"*.zip)
 
 #    printf > "/dev/stderr" "Candidate %s\n" "${cands[@]}"
-    if [ "$cands" == "$dir/$root${major:+-$major}*" ] ; then
+    if [ "$cands" == "$dir/$root${major:+-"$major"}*" ] ; then
         return 1
     fi
 
@@ -81,7 +81,7 @@ function find_lib () {
         fi
 
         # Strip off the directory and root.
-        ver="${name#$dir/$root-}"
+        ver="${name#"$dir/$root-"}"
         if [ "$ver" == "$name" ] ; then
             best="$cand"
             break
