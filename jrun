@@ -1,4 +1,5 @@
 #!/bin/bash -f
+# -*- c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 #  "jrun" - Link Java programs like C and run them
 #  Copyright (C) 2005,2014,2015,2017  Steven Simpson
@@ -28,31 +29,31 @@ function find_lib () {
 
     if [ -n "$reqver" ] ; then
         # The major version must match, so extract it.
-	local minor="${reqver#*.}"
-	if [ "$minor" == "$reqver" ] ; then
-	    unset minor
-	    local major="$reqver"
-	else
-	    local major="${reqver%%.*}"
-	fi
-	local cands=()
+        local minor="${reqver#*.}"
+        if [ "$minor" == "$reqver" ] ; then
+            unset minor
+            local major="$reqver"
+        else
+            local major="${reqver%%.*}"
+        fi
+        local cands=()
     else
-	local reqver=0
-	local major
-	unset major
-	local minor
+        local reqver=0
+        local major
+        unset major
+        local minor
 
-	local cands=("$dir/$root.jar" "$dir/$root.zip" "$dir/$root")
+        local cands=("$dir/$root.jar" "$dir/$root.zip" "$dir/$root")
     fi
 
     # Find all matching files.
     cands=("${cands[@]}" \
-	"$dir/$root${major:+-$major}"*.jar \
-	"$dir/$root${major:+-$major}"*.zip)
+        "$dir/$root${major:+-$major}"*.jar \
+        "$dir/$root${major:+-$major}"*.zip)
 
 #    printf > "/dev/stderr" "Candidate %s\n" "${cands[@]}"
     if [ "$cands" == "$dir/$root${major:+-$major}*" ] ; then
-	return 1
+        return 1
     fi
 
     # Find the best one.
@@ -63,50 +64,50 @@ function find_lib () {
     local suffix
     local name
     for cand in "${cands[@]}" ; do
-	# Skip unreadable items.
-	if [ ! -r "$cand" ] ; then continue ; fi
+        # Skip unreadable items.
+        if [ ! -r "$cand" ] ; then continue ; fi
 
-	if [ -f "$cand" ] ; then
-	    # A file must end in .jar.
-	    suffix="${cand##*.}"
-	    if [ "$suffix" != "jar" -a "$suffix" != "zip" ] ; then
-		continue
-	    fi
-	    name="${cand%.*}"
-	elif [ ! -d "$cand" ] ; then
-	    continue
-	else
-	    name="$cand"
-	fi
+        if [ -f "$cand" ] ; then
+            # A file must end in .jar.
+            suffix="${cand##*.}"
+            if [ "$suffix" != "jar" -a "$suffix" != "zip" ] ; then
+                continue
+            fi
+            name="${cand%.*}"
+        elif [ ! -d "$cand" ] ; then
+            continue
+        else
+            name="$cand"
+        fi
 
-	# Strip off the directory and root.
-	ver="${name#$dir/$root-}"
-	if [ "$ver" == "$name" ] ; then
-	    best="$cand"
-	    break
-	fi
-	if [ -z "$ver" ] ; then ver=0 ; fi
+        # Strip off the directory and root.
+        ver="${name#$dir/$root-}"
+        if [ "$ver" == "$name" ] ; then
+            best="$cand"
+            break
+        fi
+        if [ -z "$ver" ] ; then ver=0 ; fi
 
-#	printf > "/dev/stderr" "\nCandidate %s\n" "$ver"
+#       printf > "/dev/stderr" "\nCandidate %s\n" "$ver"
 
-#	if cmp_vers "$reqver" "$ver" ; then
-#	    printf > "/dev/stderr" "\t%s as good as %s\n" "$ver" "$reqver"
-	    if [ -z "$best" ] ; then
-#		printf > "/dev/stderr" "\tbest so far\n"
-		best="$cand"
-		bestver="$ver"
-	    elif cmp_vers "$ver" "$bestver" ; then
-		continue
-	    else
-#		printf > "/dev/stderr" "\tbest so far\n"
-		best="$cand"
-		bestver="$ver"
-	    fi
-#	fi
+#       if cmp_vers "$reqver" "$ver" ; then
+#           printf > "/dev/stderr" "\t%s as good as %s\n" "$ver" "$reqver"
+            if [ -z "$best" ] ; then
+#               printf > "/dev/stderr" "\tbest so far\n"
+                best="$cand"
+                bestver="$ver"
+            elif cmp_vers "$ver" "$bestver" ; then
+                continue
+            else
+#               printf > "/dev/stderr" "\tbest so far\n"
+                best="$cand"
+                bestver="$ver"
+            fi
+#       fi
     done
 
     if cmp_vers "$reqver" "$bestver" ; then
-	printf "$best"
+        printf "$best"
     fi
 }
 
@@ -115,9 +116,9 @@ function find_lib () {
 #     less_than_wrapped "$@"
 #     local result=$?
 #     if [ "$result" -eq 0 ] ; then
-# 	local text="true"
+#       local text="true"
 #     else
-# 	local text="false"
+#       local text="false"
 #     fi
 #     printf > "/dev/stderr" "item %5s <  %5s = %s\n" "$1" "$2" "$text"
 #     return "$result"
@@ -128,9 +129,9 @@ function find_lib () {
 #     cmp_vers_wrapped "$@"
 #     local result=$?
 #     if [ "$result" -eq 0 ] ; then
-# 	local text="true"
+#       local text="true"
 #     else
-# 	local text="false"
+#       local text="false"
 #     fi
 #     printf > "/dev/stderr" "path %5s >= %5s = %s\n" "$2" "$1" "$text"
 #     return "$result"
@@ -141,57 +142,57 @@ function less_than () {
     local right="$2"
 
     left="$(echo "$left" | \
-	sed -e 's/\([0-9]\)\([^0-9]\)/\1.\2/g' \
-	-e 's/\([^0-9]\)\([0-9]\)/\1.\2/g')"
+        sed -e 's/\([0-9]\)\([^0-9]\)/\1.\2/g' \
+        -e 's/\([^0-9]\)\([0-9]\)/\1.\2/g')"
 
     right="$(echo "$right" | \
-	sed -e 's/\([0-9]\)\([^0-9]\)/\1.\2/g' \
-	-e 's/\([^0-9]\)\([0-9]\)/\1.\2/g')"
+        sed -e 's/\([0-9]\)\([^0-9]\)/\1.\2/g' \
+        -e 's/\([^0-9]\)\([0-9]\)/\1.\2/g')"
 
     if [ "$left" == "$1" -a "$right" == "$2" ] ; then
-	# We're dealing with atoms, so do the direct comparison.
-	if [[ "$left" =~ ^-?[0-9]+$ ]] ; then
-	    if [[ "$right" =~ ^-?[0-9]+$ ]] ; then
-		# Numeric comparison is possible.
-		if [ "$1" -lt "$2" ] ; then
-		    return 0
-		else
-		    return 1
-		fi
-	    else
-	        # The name (right) is always less than the number
-	        # (left).
-		return 1
-	    fi
-	else
-	    if [[ "$right" =~ ^-?[0-9]+$ ]] ; then
-	        # The name (left) is always less than the number
-	        # (right).
-		return 0
-	    else
-	        # Do alphabetic comparison.
-		if [ "$left" \< "$right" ] ; then
-		    return 0
-		else
-		    return 1
-		fi
-	    fi
-	fi
+        # We're dealing with atoms, so do the direct comparison.
+        if [[ "$left" =~ ^-?[0-9]+$ ]] ; then
+            if [[ "$right" =~ ^-?[0-9]+$ ]] ; then
+                # Numeric comparison is possible.
+                if [ "$1" -lt "$2" ] ; then
+                    return 0
+                else
+                    return 1
+                fi
+            else
+                # The name (right) is always less than the number
+                # (left).
+                return 1
+            fi
+        else
+            if [[ "$right" =~ ^-?[0-9]+$ ]] ; then
+                # The name (left) is always less than the number
+                # (right).
+                return 0
+            else
+                # Do alphabetic comparison.
+                if [ "$left" \< "$right" ] ; then
+                    return 0
+                else
+                    return 1
+                fi
+            fi
+        fi
     else
-	if [ "$left" == "$1" ] ; then left="$left.0" ; fi
-	if [ "$right" == "$1" ] ; then left="$right.0" ; fi
-	# At least one operand is compound, so apply the more complex
-	# comparison.
-	if cmp_vers "$left" "$right" ; then
-	    return 0
-	else
-	    return 1
-	fi
+        if [ "$left" == "$1" ] ; then left="$left.0" ; fi
+        if [ "$right" == "$1" ] ; then left="$right.0" ; fi
+        # At least one operand is compound, so apply the more complex
+        # comparison.
+        if cmp_vers "$left" "$right" ; then
+            return 0
+        else
+            return 1
+        fi
     fi
 
 
 #    if [ "$1" -lt "$2" ] ; then
-#	return 0
+#       return 0
 #    fi
 #    return 1
 }
@@ -205,44 +206,44 @@ function cmp_vers () {
     local nv2
 
     while true ; do
-	# Remove and store suffixes.
-	nv1="${v1#*.}"
-	if [ "$nv1" == "$v1" ] ; then
-	    unset nv1
-	else
-	    v1="${v1%%.*}"
-	fi
-	nv2="${v2#*.}"
-	if [ "$nv2" == "$v2" ] ; then
-	    unset nv2
-	else
-	    v2="${v2%%.*}"
-	fi
+        # Remove and store suffixes.
+        nv1="${v1#*.}"
+        if [ "$nv1" == "$v1" ] ; then
+            unset nv1
+        else
+            v1="${v1%%.*}"
+        fi
+        nv2="${v2#*.}"
+        if [ "$nv2" == "$v2" ] ; then
+            unset nv2
+        else
+            v2="${v2%%.*}"
+        fi
 
-	# Check number at this level to see if it fails the
-	# requirement.
-	less_than "$v2" "$v1" && return 1
-	less_than "$v1" "$v2" && return 0
+        # Check number at this level to see if it fails the
+        # requirement.
+        less_than "$v2" "$v1" && return 1
+        less_than "$v1" "$v2" && return 0
 
-	# The numbers must be identical here.
+        # The numbers must be identical here.
 
-	# If there is no further requirement, we have a match.
-	[ -z "$nv1" ] && return 0
+        # If there is no further requirement, we have a match.
+        [ -z "$nv1" ] && return 0
 
-	# If there is nothing more available, we have a failure.
-	[ -z "$nv2" ] && return 1
+        # If there is nothing more available, we have a failure.
+        [ -z "$nv2" ] && return 1
 
-	# Move on to next segments.
-	v1="$nv1"
-	v2="$nv2"
+        # Move on to next segments.
+        v1="$nv1"
+        v2="$nv2"
     done
 }
 
 while test $# -gt 0
 do
     case "$1" in
-	-h)
-	    cat << EOF > "/dev/stderr"
+        -h)
+            cat << EOF > "/dev/stderr"
 
 Usage: $0 [-c cmd] [-L dir]* [-l lib]* [-a lib]* args
 Run the command cmd (default "java") with the given args, having set
@@ -261,128 +262,128 @@ Usage: $0 [-L dir]* [-l lib]* [-a lib]* -r
 Print CLASSPATH and PROCPATH, as if javac arguments.
 
 EOF
-	    exit
-	    ;;
-	-c)
-	    shift
-	    cmd="$1"
-	    ;;
+            exit
+            ;;
+        -c)
+            shift
+            cmd="$1"
+            ;;
 
 
-	-p)
-	    printf "%s\n" "$CLASSPATH"
-	    exit
-	    ;;
+        -p)
+            printf "%s\n" "$CLASSPATH"
+            exit
+            ;;
 
-	-e)
-	    [ -n "$CLASSPATH" ] && printf "CLASSPATH=\047%s\047\n" "$CLASSPATH"
-	    [ -n "$PROCPATH" ] && printf "PROCPATH=\047%s\047\n" "$PROCPATH"
-	    exit
-	    ;;
+        -e)
+            [ -n "$CLASSPATH" ] && printf "CLASSPATH=\047%s\047\n" "$CLASSPATH"
+            [ -n "$PROCPATH" ] && printf "PROCPATH=\047%s\047\n" "$PROCPATH"
+            exit
+            ;;
 
-	-r)
-	    [ -n "$CLASSPATH" ] && printf " -classpath \047%s\047" "$CLASSPATH"
-	    [ -n "$PROCPATH" ] && \
-		printf " -processorpath \047%s\047" "$PROCPATH"
-	    exit
-	    ;;
-
-
-	-l*)
-	    LIB="${1:2}"
-	    if [ "$LIB" == "" ]
-	    then
-		shift
-		LIB="$1"
-	    fi
-
-	    version="${LIB#*:}"
-	    if [ "$version" == "$LIB" ] ; then
-		unset version
-	    else
-		LIB="${LIB%%:*}"
-	    fi
-
-	    found=""
-	    for dir in $(echo "${CLASSDIRS}" | tr ":" " ")
-	    do
-		found="$(find_lib "$dir" "$LIB" "$version")"
-		if [ -n "$found" ] ; then break; fi
-	    done
-
-	    if [ -z "$found" ]
-	    then
-		ERROR=true
-		printf "Can't find Java library \042%s\042.\n" \
-		    "$LIB${version:+:$version}" > "/dev/stderr"
-	    else
-		if [ -n "$CLASSPATH" ]
-		then
-		    CLASSPATH="${CLASSPATH}:"
-		fi
-		CLASSPATH="${CLASSPATH}$found"
-	    fi
-	    ;;
-
-	-a*)
-	    LIB="${1:2}"
-	    if [ "$LIB" == "" ]
-	    then
-		shift
-		LIB="$1"
-	    fi
-
-	    version="${LIB#*:}"
-	    if [ "$version" == "$LIB" ] ; then
-		unset version
-	    else
-		LIB="${LIB%%:*}"
-	    fi
-
-	    found=""
-	    for dir in $(echo "${CLASSDIRS}" | tr ":" " ")
-	    do
-		found="$(find_lib "$dir" "$LIB" "$version")"
-		if [ -n "$found" ] ; then break; fi
-	    done
-
-	    if [ -z "$found" ]
-	    then
-		ERROR=true
-		printf "Can't find Java library \042%s\042.\n" \
-		    "$LIB${version:+:$version}" > "/dev/stderr"
-	    else
-		if [ -n "$PROCPATH" ]
-		then
-		    PROCPATH="${PROCPATH}:"
-		fi
-		PROCPATH="${PROCPATH}$found"
-	    fi
-	    ;;
+        -r)
+            [ -n "$CLASSPATH" ] && printf " -classpath \047%s\047" "$CLASSPATH"
+            [ -n "$PROCPATH" ] && \
+                printf " -processorpath \047%s\047" "$PROCPATH"
+            exit
+            ;;
 
 
-	-L*)
-	    DIR="${1:2}"
-	    if [ -z "$DIR" ]
-	    then
-		shift
-		DIR="$1"
-	    fi
-	    if [ -n "$CLASSDIRS" ]
-	    then
-		CLASSDIRS="${CLASSDIRS}:"
-	    fi
-	    CLASSDIRS="${CLASSDIRS}$DIR"
-	    ;;
+        -l*)
+            LIB="${1:2}"
+            if [ "$LIB" == "" ]
+            then
+                shift
+                LIB="$1"
+            fi
 
-	--)
-	    shift
-	    break
-	    ;;
+            version="${LIB#*:}"
+            if [ "$version" == "$LIB" ] ; then
+                unset version
+            else
+                LIB="${LIB%%:*}"
+            fi
 
-	*)
-	    break
-	    ;;
+            found=""
+            for dir in $(echo "${CLASSDIRS}" | tr ":" " ")
+            do
+                found="$(find_lib "$dir" "$LIB" "$version")"
+                if [ -n "$found" ] ; then break; fi
+            done
+
+            if [ -z "$found" ]
+            then
+                ERROR=true
+                printf "Can't find Java library \042%s\042.\n" \
+                    "$LIB${version:+:$version}" > "/dev/stderr"
+            else
+                if [ -n "$CLASSPATH" ]
+                then
+                    CLASSPATH="${CLASSPATH}:"
+                fi
+                CLASSPATH="${CLASSPATH}$found"
+            fi
+            ;;
+
+        -a*)
+            LIB="${1:2}"
+            if [ "$LIB" == "" ]
+            then
+                shift
+                LIB="$1"
+            fi
+
+            version="${LIB#*:}"
+            if [ "$version" == "$LIB" ] ; then
+                unset version
+            else
+                LIB="${LIB%%:*}"
+            fi
+
+            found=""
+            for dir in $(echo "${CLASSDIRS}" | tr ":" " ")
+            do
+                found="$(find_lib "$dir" "$LIB" "$version")"
+                if [ -n "$found" ] ; then break; fi
+            done
+
+            if [ -z "$found" ]
+            then
+                ERROR=true
+                printf "Can't find Java library \042%s\042.\n" \
+                    "$LIB${version:+:$version}" > "/dev/stderr"
+            else
+                if [ -n "$PROCPATH" ]
+                then
+                    PROCPATH="${PROCPATH}:"
+                fi
+                PROCPATH="${PROCPATH}$found"
+            fi
+            ;;
+
+
+        -L*)
+            DIR="${1:2}"
+            if [ -z "$DIR" ]
+            then
+                shift
+                DIR="$1"
+            fi
+            if [ -n "$CLASSDIRS" ]
+            then
+                CLASSDIRS="${CLASSDIRS}:"
+            fi
+            CLASSDIRS="${CLASSDIRS}$DIR"
+            ;;
+
+        --)
+            shift
+            break
+            ;;
+
+        *)
+            break
+            ;;
     esac
     shift
 done
@@ -391,8 +392,8 @@ done
 if [ -z "$ERROR" ]
 then
     exec "$cmd" \
-	${CLASSPATH:+-classpath "$CLASSPATH"} \
-	${PROCPATH:+-processorpath "$PROCPATH"} "$@"
+        ${CLASSPATH:+-classpath "$CLASSPATH"} \
+        ${PROCPATH:+-processorpath "$PROCPATH"} "$@"
 else
     exit 1
 fi

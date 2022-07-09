@@ -1,4 +1,5 @@
 #!/bin/sh
+# -*- c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 ## Either print a line beginning with the second argument, followed by
 ## all others comma-separated, or do nothing if there is nothing

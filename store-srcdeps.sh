@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 #  Jardeps - per-tree Java dependencies in Make
 #  Copyright (c) 2007-16,2018-19,2021-22, Lancaster University
@@ -27,9 +28,9 @@ TREE="$1"
 shift
 
 ( while [ $# -gt 0 ] ; do
-	if [ -r "${PREFIX}$1.java" ] ; then
-	    printf 'srclist-%s += %s.java\n' "$TREE" "$1"
-	fi
-	shift
-	done
+        if [ -r "${PREFIX}$1.java" ] ; then
+            printf 'srclist-%s += %s.java\n' "$TREE" "$1"
+        fi
+        shift
+        done
 ) > "$DEST"

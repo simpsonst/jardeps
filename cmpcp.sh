@@ -1,4 +1,5 @@
 #!/bin/sh
+# -*- c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 CMP="$1"
 shift

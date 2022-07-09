@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 #  Jardeps - per-tree Java dependencies in Make
 #  Copyright (c) 2007-16,2018-19,2021-22, Lancaster University
@@ -34,19 +35,19 @@ shift
 
 {
     while [ $# -gt 0 ] ; do
-	if [ "$1" = "--" ] ; then
-	    shift
-	    break
-	fi
-	printf '%s.class\n' "$1"
-	shift
+        if [ "$1" = "--" ] ; then
+            shift
+            break
+        fi
+        printf '%s.class\n' "$1"
+        shift
     done
 
     while [ $# -gt 0 ] ; do
-	arg="$1"
-	shift
-	sfx="${arg#"${PREFIX}"}"
-	if [ "$sfx" = "$arg" ] ; then continue ; fi
-	printf '%s\n' "$sfx"
+        arg="$1"
+        shift
+        sfx="${arg#"${PREFIX}"}"
+        if [ "$sfx" = "$arg" ] ; then continue ; fi
+        printf '%s\n' "$sfx"
     done
 } > "$DEST"

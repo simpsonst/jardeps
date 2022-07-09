@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 JAVA="$1"
 shift
@@ -15,30 +16,30 @@ jargs=()
 
 while [ $# -gt 0 ] ; do
     case "$1" in
-	-reverse)
-	    reverse=true
-	    ;;
+        -reverse)
+            reverse=true
+            ;;
 
-	-J*)
-	    jargs+=("${1:2}")
-	    true
-	    ;;
+        -J*)
+            jargs+=("${1:2}")
+            true
+            ;;
 
-	-encoding)
-	    shift
-	    enc="$1"
-	    ;;
+        -encoding)
+            shift
+            enc="$1"
+            ;;
 
-	*)
-	    if [ -z "$input" ] ; then
-		input="$1"
-	    elif [ -z "$output" ] ; then
-		output="$1"
-	    else
-		printf >&2 '%s: too many arguments: %s\n' "$0" "$1"
-		exit 1
-	    fi
-	    ;;
+        *)
+            if [ -z "$input" ] ; then
+                input="$1"
+            elif [ -z "$output" ] ; then
+                output="$1"
+            else
+                printf >&2 '%s: too many arguments: %s\n' "$0" "$1"
+                exit 1
+            fi
+            ;;
     esac
     shift
 done

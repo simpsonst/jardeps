@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 #  Jardeps - per-tree Java dependencies in Make
 #  Copyright (c) 2007-16,2018-19,2021-22, Lancaster University
@@ -21,35 +22,35 @@ while [ $# -gt 0 ]
 do
     arg="$1" ; shift
     case "$arg" in
-	(--array)
-	    vn="$1" ; shift
-	    vc="$1" ; shift
-	    while [ "$vc" -gt 0 ]
-	    do
-		eval "$vn"'+=("$1")'
-		shift
-		vc=$((vc-1))
-	    done
-	    ;;
+        (--array)
+            vn="$1" ; shift
+            vc="$1" ; shift
+            while [ "$vc" -gt 0 ]
+            do
+                eval "$vn"'+=("$1")'
+                shift
+                vc=$((vc-1))
+            done
+            ;;
 
-	(--out)
-	    OUTFILE="$(realpath -mP "$1")"
-	    shift
-	    ;;
+        (--out)
+            OUTFILE="$(realpath -mP "$1")"
+            shift
+            ;;
 
-	(--td)
-	    TDFILE="$(realpath -mP "$1")"
-	    shift
-	    ;;
+        (--td)
+            TDFILE="$(realpath -mP "$1")"
+            shift
+            ;;
 
-	(--dir)
-	    DIR="$1"
-	    shift
-	    ;;
+        (--dir)
+            DIR="$1"
+            shift
+            ;;
 
-	(*)
-	    idls+="$arg"
-	    ;;
+        (*)
+            idls+="$arg"
+            ;;
     esac
 done
 
@@ -59,10 +60,10 @@ if [ "${#idls[@]}" -eq 0 ] ; then exit ; fi
 for i in "${idls}" ; do
     "${PRINTF[@]}" >&2 '[JARDEPS] Compiling IDL %s\n' '$i'
     {
-	"${IDLJ[@]}" "${APPLIED_IDLJFLAGS[@]}" \
-		     -v -td "$TDFILE" "$i.idl" || exit 1
-    } |	"${TEE[@]}" -a "$OUTFILE"
+        "${IDLJ[@]}" "${APPLIED_IDLJFLAGS[@]}" \
+                     -v -td "$TDFILE" "$i.idl" || exit 1
+    } | "${TEE[@]}" -a "$OUTFILE"
 done
 
 
-#	@$(if $(idls_$*),$(CD) $(JARDEPS_IDLDIR) $(foreach i,$(idls_$*),; $(PRINTF) '[JARDEPS] Compiling IDL %s\n' '$i' > /dev/stderr ; $(IDLJ) $(APPLIED_IDLJFLAGS_$*) $(APPLIED_IDLPATH_$*:%=-i %) $(foreach p,$(IDLPFXS),$(idlpkg_$p:%=-pkgTranslate $p %) $(idlpfx_$p:%=-pkgPrefix $p %)) -v -td $(abspath $(JARDEPS_TMPDIR)/idl/$*) $i.idl | $(TEE) -a $(abspath "$(JARDEPS_TMPDIR)/tree-$*.idlout")))
+#       @$(if $(idls_$*),$(CD) $(JARDEPS_IDLDIR) $(foreach i,$(idls_$*),; $(PRINTF) '[JARDEPS] Compiling IDL %s\n' '$i' > /dev/stderr ; $(IDLJ) $(APPLIED_IDLJFLAGS_$*) $(APPLIED_IDLPATH_$*:%=-i %) $(foreach p,$(IDLPFXS),$(idlpkg_$p:%=-pkgTranslate $p %) $(idlpfx_$p:%=-pkgPrefix $p %)) -v -td $(abspath $(JARDEPS_TMPDIR)/idl/$*) $i.idl | $(TEE) -a $(abspath "$(JARDEPS_TMPDIR)/tree-$*.idlout")))
