@@ -32,6 +32,14 @@ shift
 
 # The rest is the install command.
 
+
+## Strip off Git description.
+if [[ "$release" =~ ^(.*)-[0-9]+-g[0-9a-f]+$ ]] ; then
+    release="${BASH_REMATCH[1]}"
+fi
+
+
+
 function apply () {
     "$@"
     local rc=$?
