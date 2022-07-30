@@ -179,7 +179,8 @@ while true ; do
     phys="${phys#$DIR/}"
     phys="${phys#$jar-}"
 
-    if [ "$phys" = "$jar" ] || cmp_vers "$phys" "$release" ; then
+    if [ ! -r "$phys" ] || [ "$phys" = "$jar" ] ||
+           cmp_vers "$phys" "$release" ; then
         printf '  Symlinked as %s-%s\n' "$jar" "$altrelease"
         ln -sf "$jar-$release.jar" "$DIR/$jar-$altrelease.jar"
         ln -sf "$jar-src-$release.zip" "$DIR/$jar-src-$altrelease.zip"
@@ -197,7 +198,8 @@ phys="${phys%.jar}"
 phys="${phys#$DIR/}"
 phys="${phys#$jar-}"
 
-if [ "$phys" = "$jar" ] || cmp_vers "$phys" "$release" ; then
+if [ ! -r "$phys" ] || [ "$phys" = "$jar" ] ||
+       cmp_vers "$phys" "$release" ; then
     printf '  Symlinked as %s\n' "$jar"
     ln -sf "$jar-$release.jar" "$DIR/$jar.jar"
     ln -sf "$jar-src-$release.zip" "$DIR/$jar-src.zip"
